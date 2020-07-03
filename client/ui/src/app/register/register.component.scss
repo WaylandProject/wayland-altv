@@ -1,0 +1,31 @@
+.form {
+    min-width: 300px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.basic-container {
+    max-width: max-content;
+}
+
+.card-container-right {
+    display: inline;
+}
+
+.main-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.centering {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

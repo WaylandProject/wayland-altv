@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": "./src",
+    "target": "ESNEXT",
+    "module": "ESNEXT",
+    "removeComments": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "outDir": "./build",
+    "typeRoots": ["./node_modules/@types", "./node_modules/@altv"],
+  },
+  
+  "exclude": [
+	  "node_modules",
+    "ui"
+  ],
+
+  "include": [
+    "src/**/*"
+  ],
+}

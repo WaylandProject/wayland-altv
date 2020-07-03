@@ -1,0 +1,7 @@
+/mp
+.mypy_cache
+node_modules
+/temp
+/.vscode
+/mp/s_config.toml
+*.pyc

@@ -1,0 +1,6 @@
+[MongoDB]
+Host = "localhost"
+User = "root"
+Password = "root"
+Port = 27017
+DatabaseName = "wayland-server"
