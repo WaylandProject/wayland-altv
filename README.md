@@ -1,6 +1,6 @@
-# Wayland Project (GTA V/RAGE MP)
+# Wayland Project (GTA V/alt:V)
 
-The codebase of Wayland Project server (using RAGE MP platform).
+The codebase of Wayland Project server (using alt:V platform).
 
 ## Building
 
@@ -24,7 +24,7 @@ The codebase of Wayland Project server (using RAGE MP platform).
 
 ## Running
 
-Simply run `ragemp-server` executable in `mp` folder
+Simply run `altv-server` executable in `mp` folder
 
 ## License
 
