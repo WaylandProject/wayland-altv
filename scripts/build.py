@@ -26,11 +26,14 @@ import signal
 import shlex
 from _exec import exec
 
+os.chdir("../")
+root_dir: str = os.getcwd()
+
 def build_server():
     cp_cmd = "cp -r"
     if platform.system() == "Windows":
         cp_cmd = "copy"
-    os.chdir("../server")
+    os.chdir(f"{root_dir}/server")
     exec("dotnet restore", True)
     exec("dotnet build", True)
     shutil.copytree("./compiled/netcoreapp3.1", "../mp/resources/wrp-server",
@@ -45,15 +48,16 @@ def build_server():
     print("Server was successfully built!")
 
 def build_client():
-    os.chdir("../client")
+    os.chdir(f"{root_dir}/client")
     exec("tsc", True)
     shutil.copytree("./build", "../mp/resources/wrp/client", dirs_exist_ok=True)
+    shutil.copytree("./other", "../mp/resources/wrp/client/other", dirs_exist_ok=True)
     print("Client was successfully built!")
 
 def build_ui():
-    os.chdir("../client/ui")
+    os.chdir(f"{root_dir}/client/ui")
     exec("ng build", True)
-    shutil.copytree("./ui/dist", "../mp/resources/wrp/ui",
+    shutil.copytree("./dist", "../../mp/resources/wrp/ui",
                     dirs_exist_ok=True)
     print("UI was successfully built!")
 
@@ -64,20 +68,19 @@ def clean_server():
     print("Server was successfully cleaned!")
 
 def start_server():
-    os.chdir("../mp")
+    os.chdir(f"{root_dir}/mp")
     exec_name = "altv-server"
     if platform.system() == "Windows":
         exec_name + ".exe"
     exec(f"{exec_name}", True)
 
 def start_ui_dev():
-    os.chdir("../client/ui")
+    os.chdir(f"{root_dir}/client/ui")
     exec("ng serve", True)
 
 try:
     operation = sys.argv[1]
 except IndexError:
-    clean_server()
     build_client()
     build_ui()
     build_server()
@@ -93,7 +96,7 @@ elif operation == "start":
     start_server()
 elif operation == "ui_dev":
     start_ui_dev()
-elif operation == "ui_dev":
+elif operation == "ui":
     build_ui()
 else:
-    print("Unknown operation! Available only following operations: server, client, clean, ui_dev or start (or just empty - rebuild whole server and client).")
+    print("Unknown operation! Available only following operations: server, client, clean, ui_dev, ui or start (or just empty - rebuild whole server and client).")
