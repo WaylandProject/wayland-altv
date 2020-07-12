@@ -27,14 +27,15 @@ export class Camera {
 	private _target: number = 0
 	private _cameraHeight: number
 	private _screenWidth: number
-	private _screenHeight: number
+	//private _screenHeight: number
 	private _interval: number | undefined
 	private _playerControlFunction: () => void
     private _noWASD: boolean = false
     private _rotation: Vector3
     private _position: Vector3
+    private _setHDAreaAndFocus: boolean = true;
 
-    constructor(pos: Vector3, fov: number, rot: Vector3 = {x: 0, y: 0, z:0}) {
+    constructor(pos: Vector3, fov: number, rot: Vector3 = {x: 0, y: 0, z:0}, setHDAreaAndFocus: boolean = true) {
         const args = native.getActiveScreenResolution(0, 0);
 
         this._cam = native.createCamWithParams(
@@ -52,10 +53,11 @@ export class Camera {
 
         this._cameraHeight = 0;
         this._screenWidth = args[1];
-		this._screenHeight = args[2];
+		//this._screenHeight = args[2];
         this._playerControlFunction = () => {}
         this._rotation = rot
         this._position = pos
+        this._setHDAreaAndFocus = setHDAreaAndFocus;
     }
 
     fov(value: number) {
@@ -92,27 +94,43 @@ export class Camera {
 
     setPosition(pos: Vector3) {
         this._position = pos;
+        if (this._setHDAreaAndFocus) {
+            native.setFocusPosAndVel(pos.x, pos.y, pos.z, 0.0, 0.0, 0.0)
+            native.setHdArea(pos.x, pos.y, pos.z, 30.0);
+        }
         native.setCamCoord(this._cam, pos.x, pos.y, pos.z);
         native.setCamActive(this._cam, true);
         native.renderScriptCams(true, false, 0, true, false, undefined);
     }
 
-    rotate(pitch: number, roll: number, yaw: number) {
+    setRotation(pitch: number, roll: number, yaw: number) {
         native.setCamRot(this._cam, pitch, roll, yaw, 0);
         native.setCamActive(this._cam, true);
         native.renderScriptCams(true, false, 0, true, false, undefined);
     }
 
     unrender() {
+        if (this._setHDAreaAndFocus) {
+            native.clearFocus();
+            native.clearHdArea();
+        }
         native.renderScriptCams(false, false, 0, false, false, undefined);
     }
 
     render() {
+        if (this._setHDAreaAndFocus) {
+            native.setFocusPosAndVel(this._position.x, this._position.y, this._position.z, 0.0, 0.0, 0.0)
+            native.setHdArea(this._position.x, this._position.y, this._position.z, 30.0);
+        }
         native.setCamActive(this._cam, true);
         native.renderScriptCams(true, false, 0, true, false, undefined);
     }
 
     destroy() {
+        if (this._setHDAreaAndFocus) {
+            native.clearFocus();
+            native.clearHdArea();
+        }
         native.destroyAllCams(true);
         native.renderScriptCams(false, false, 0, false, false, undefined);
 

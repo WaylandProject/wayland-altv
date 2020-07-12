@@ -10,8 +10,7 @@ import { VrpcHandlerService } from '@eisengrind/ng-v-rpc';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private vrpc: VrpcHandlerService,
-              private fb: FormBuilder) {
+  constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
@@ -23,5 +22,9 @@ export class LoginComponent implements OnInit {
 
   public hasError = (controlName: string, errorName: string) => {
     return this.loginForm.get(controlName).hasError(errorName);
+  }
+
+  public submit(): void {
+    alt.emit('onEnterLoginData', { email: this.loginForm.value.email, password: this.loginForm.value.password });
   }
 }

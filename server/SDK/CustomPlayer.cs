@@ -22,6 +22,8 @@ using AltV.Net.Elements.Entities;
 
 namespace Wayland.SDK {
     public class CustomPlayer : Player {
+        public bool LoggedIn { get; set; }
+        public AccountData? Data { get; set; }
         public CustomPlayer(IntPtr nativePointer, ushort id) : base(nativePointer, id) {}
     }
 }

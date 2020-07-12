@@ -17,7 +17,7 @@
  * along with Wayland Project Server.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AltVEventConstants } from './utils/AltVEventsConstants';
+import { ServerEventConstants } from './utils/ServerEventsConstants';
 import { Utils } from './utils/Utils';
 import * as alt from "alt-client";
 import { Vector3 } from 'alt-client';
@@ -27,16 +27,18 @@ import { WebView } from './utils/sdk/webview';
 var authBrowser: WebView
 var authCamera: Camera
 
-alt.onServer(AltVEventConstants.Auth.ShowAuthScreen, () => {
+alt.onServer(ServerEventConstants.Auth.ShowAuthScreen, () => {
     authBrowser = new WebView();
     authBrowser.open(Utils.generateUILink('login'), true)
-    authCamera = new Camera(new Vector3(788.1887817382812, 974.5294189453125, 380.5456237792969), 55, new Vector3(0,0,0));
-    authCamera.pointAtCoord(new Vector3(745.0472412109375, 1190.494873046875, 324.84991455078125));
+    authBrowser.on("onEnterRegisterData", (registerData: any) => {
+        alt.emitServer("onEnterRegisterData", registerData)
+    });
+    authCamera = new Camera(new Vector3(-68.1, 468.32, 265.27), 65, new Vector3(-18, 0, -178.5));
     authCamera.render();
 })
 
 alt.on("keyup", (key: number) => {
-    switch(key) {
+    switch (key) {
         case 74: {
             authBrowser.close()
             authBrowser.destroyWebView()
@@ -44,4 +46,20 @@ alt.on("keyup", (key: number) => {
             break
         }
     }
+})
+
+alt.on("onEnterLoginData", (loginData: any) => {
+    alt.emitServer("onEnterLoginData", loginData)
+})
+
+alt.onServer('onRegistrationFailed', (errCode: number, errText: number) => {
+    console.log(errCode, errText);
+    authBrowser.emit('onRegistrationFailed', errCode, errText);
+})
+
+alt.onServer("onRegistrationSuccess", () => {
+    alt.log("reg is success")
+    authBrowser.close()
+    authBrowser.destroyWebView()
+    authCamera.destroy()
 })

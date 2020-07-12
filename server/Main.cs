@@ -28,31 +28,39 @@ using Wayland.SDK;
 namespace Wayland
 {
     public class Main : Resource
-	{
-		public void OnPlayerJoin(CustomPlayer player) {
-			Alt.Emit(ServerEventsConstants.DefaultEvents.OnPlayerJoin, player);
-		}
+    {
+        public void OnPlayerJoin(CustomPlayer player)
+        {
+            Alt.Emit(ServerEventsConstants.DefaultEvents.OnPlayerJoin, player);
+        }
 
-		[ClientEvent("saveCamCoords")]
-		public void SaveCameraCoords(Player player, string coords, string cameraPos, string name) {
-			Console.WriteLine($"Coords: {coords}\nCamera pos: ${cameraPos}\nName: ${name}");
-		}
+        [ClientEvent("saveCamCoords")]
+        public void SaveCameraCoords(CustomPlayer player, string coords, string cameraPos, string name)
+        {
+            Console.WriteLine($"Coords: {coords}\nCamera pos: ${cameraPos}\nName: ${name}");
+        }
 
         public override void OnStart()
         {
             var config = ParseConfig("s_config.toml");
-			Context.Init(config);
-			Alt.Emit(ServerEventsConstants.DefaultEvents.OnServerStart);
-			Alt.Log("Wayland Project server started!");
+            Context.Init(config);
+            Alt.Emit(ServerEventsConstants.DefaultEvents.OnServerStart);
+            Alt.Log("Wayland Project server started!");
         }
 
-		private Configuration ParseConfig(string filename) {
-			return Toml.ReadFile<Configuration>(filename);
-		}
+        private Configuration ParseConfig(string filename)
+        {
+            return Toml.ReadFile<Configuration>(filename);
+        }
 
         public override void OnStop()
         {
             Alt.Emit(ServerEventsConstants.DefaultEvents.OnServerStop);
+        }
+
+        public override IEntityFactory<IPlayer> GetPlayerFactory()
+        {
+            return new CustomPlayerFactory();
         }
     }
 }

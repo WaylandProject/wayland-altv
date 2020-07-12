@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { VrpcHandlerService } from '@eisengrind/ng-v-rpc';
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { MyErrorStateMatcher } from '../error-state-matcher';
+
+alt.on('onRegistrationFailed', (errCode: number, errText: string) => {
+  console.log(errCode, errText);
+});
 
 @Component({
   selector: 'app-register',
@@ -13,17 +16,16 @@ export class RegisterComponent implements OnInit {
 
   registerForm: FormGroup;
 
-  constructor(private vrpc: VrpcHandlerService,
-              private fb: FormBuilder) {
-                this.registerForm = this.fb.group({
-                  email: ['', [Validators.required, Validators.email]],
-                  login: ['', [Validators.required]],
-                  passwordGroup: this.fb.group({
-                    password: ['', [Validators.required, Validators.minLength(3)]],
-                    confirmPassword: ['', [Validators.required]]
-                  }, { validator: checkPasswords })
-                });
-              }
+  constructor(private fb: FormBuilder) {
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      login: ['', [Validators.required]],
+      passwordGroup: this.fb.group({
+        password: ['', [Validators.required, Validators.minLength(3)]],
+        confirmPassword: ['', [Validators.required]]
+      }, { validator: checkPasswords })
+    });
+  }
 
   ngOnInit(): void {
   }
@@ -33,10 +35,14 @@ export class RegisterComponent implements OnInit {
   }
 
   public submit(): void {
-    if (!this.registerForm.valid) {
-      console.warn('incorrect input in form');
-      return;
-    }
+    console.log('submit');
+    alt.emit('onEnterRegisterData',
+      {
+        email: this.registerForm.value.email,
+        login: this.registerForm.value.login,
+        password: this.registerForm.value.passwordGroup.password
+      }
+    );
   }
 }
 

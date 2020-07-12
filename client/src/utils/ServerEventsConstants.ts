@@ -17,7 +17,7 @@
  * along with Wayland Project Server.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export class AltVEventConstants {
+export class ServerEventConstants {
     static Auth = class {
         public static readonly ShowAuthScreen = "shauthscr";
     }
