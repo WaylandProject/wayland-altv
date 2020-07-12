@@ -180,7 +180,7 @@ function executeActions() {
         native.setCamRot(
             freecam.camera,
             newCamRot.x,
-            newCamRot.y,
+            0,
             newCamRot.z,
             2
         );
