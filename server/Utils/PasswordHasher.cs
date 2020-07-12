@@ -61,7 +61,7 @@ namespace Wayland.Utils
             return buffer;
         }
 
-        private static bool VerifyHash(string password, byte[] salt, byte[] hash)
+        public static bool VerifyHash(string password, byte[] salt, byte[] hash)
         {
             var newHash = _createPasswordHashWithCustomSalt(password, salt);
             return hash.SequenceEqual(newHash);

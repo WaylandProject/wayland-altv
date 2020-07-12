@@ -19,4 +19,5 @@
 
 
 import './auth'
+import './player'
 import './admin/fly'

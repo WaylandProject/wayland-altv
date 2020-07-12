@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 /**
  * Copyright (C) 2020 ChronosX88
  * 
@@ -17,8 +18,10 @@
  * along with Wayland Project Server.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
 using AltV.Net;
+using AltV.Net.Enums;
 using MongoDB.Driver;
 using Wayland.SDK;
 using Wayland.Utils;
@@ -35,16 +38,39 @@ namespace Wayland
             player.Emit(AltVEventsConstants.Auth.ShowAuthScreen);
         }
 
-        [ClientEvent("onEnterLoginData")]
-        public static void OnEnterLoginData(CustomPlayer player, Dictionary<string, string> loginData)
+        [ClientEvent("auth:enterLoginData")]
+        public static async void OnEnterLoginData(CustomPlayer player, Dictionary<string, string> loginData)
         {
-            //
+            var col = Context.MongoDB.GetCollection<AccountData>("accounts");
+            var email = loginData["email"];
+            var password = loginData["password"];
+            try {
+                var filter = Builders<AccountData>.Filter.Eq("Email", email);
+                var res = await col.Find(filter).Limit(1).SingleOrDefaultAsync();
+                if (res == null) {
+                    player.Emit("auth:loginFailed", "account doesn't exist");
+                    return;
+                }
+                var isPasswordCorrect = PasswordHasher.VerifyHash(password, res!.Salt, res!.Password);
+                if (isPasswordCorrect) {
+                    player.Emit("auth:loginSuccess");
+                    player.LoggedIn = true;
+                    player.Data = res;
+                    spawnPlayer(player, 0);
+                    return;
+                }
+            } catch (Exception e) {
+                Alt.Log(e.ToString());
+                player.Emit("auth:loginFailed", e.Message);
+            }
         }
 
-        [ClientEvent("onEnterRegisterData")]
+        [ClientEvent("auth:enterRegisterData")]
         public static async void OnEnterRegisterData(CustomPlayer player, Dictionary<string, string> registerData)
         {
-            Alt.Log("submit register");
+            if (player.LoggedIn) {
+                return;
+            }
             var pData = new AccountData();
             pData.Email = registerData["email"];
             pData.Login = registerData["login"];
@@ -53,23 +79,39 @@ namespace Wayland
             pData.Salt = passAndSalt.Item2;
             try
             {
-                await accountsCol!.InsertOneAsync(pData);
+                pData.Save();
             }
             catch (MongoWriteException e)
             {
                 Alt.Log(e.ToString());
                 if (e.WriteError.Code == 11000)
                 {
-                    player.Emit("onRegistrationFailed", 0, "Player with such email or login already exists!");
+                    player.Emit("auth:registerFailed", 0, "Player with such email or login already exists!");
                 }
                 else
                 {
-                    player.Emit("onRegistrationFailed", 1, e.Message);
+                    player.Emit("auth:registerFailed", 1, e.Message);
                 }
                 return;
             }
-            Alt.Log("reg is completed");
-            player.Emit("onRegistrationSuccess");
+            player.LoggedIn = true;
+            player.Data = pData;
+            player.Emit("auth:registerSuccess");
+
+            player.Model = (uint) PedModel.FreemodeMale01;
+            spawnPlayer(player, 0);
+        }
+
+        [ScriptEvent(ScriptEventType.PlayerDead)]
+        public static async void OnPlayerDead(CustomPlayer player, CustomPlayer killer, uint reason) {
+            spawnPlayer(player, 2000);
+            await Task.Delay(2000);
+            player.Emit("player:onSpawn");
+        }
+
+        private static void spawnPlayer(CustomPlayer player, uint delay) {
+            player.Spawn(OtherConstants.SPAWN_POS, delay);
+            player.Rotation = OtherConstants.SPAWN_ROT;
         }
 
         [ServerEvent]

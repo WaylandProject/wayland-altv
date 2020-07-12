@@ -20,6 +20,7 @@
 import { ServerEventConstants } from './utils/ServerEventsConstants';
 import { Utils } from './utils/Utils';
 import * as alt from "alt-client";
+import * as native from "natives";
 import { Vector3 } from 'alt-client';
 import { Camera } from './utils/sdk/camera';
 import { WebView } from './utils/sdk/webview';
@@ -31,9 +32,12 @@ alt.onServer(ServerEventConstants.Auth.ShowAuthScreen, () => {
     authBrowser = new WebView();
     authBrowser.open(Utils.generateUILink('login'), true)
     authBrowser.on("onEnterRegisterData", (registerData: any) => {
-        alt.emitServer("onEnterRegisterData", registerData)
-    });
-    authCamera = new Camera(new Vector3(-68.1, 468.32, 265.27), 65, new Vector3(-18, 0, -178.5));
+        alt.emitServer("auth:enterRegisterData", registerData)
+    })
+    authBrowser.on("auth:enterLoginData", (loginData: any) => {
+        alt.emitServer("auth:enterLoginData", loginData)
+    })
+    authCamera = new Camera(new Vector3(-68.1, 468.32, 265.27), 65, new Vector3(-18, 0, -178.5), true);
     authCamera.render();
 })
 
@@ -42,24 +46,30 @@ alt.on("keyup", (key: number) => {
         case 74: {
             authBrowser.close()
             authBrowser.destroyWebView()
-            authCamera.destroy()
+            native.displayRadar(false);
+            //authCamera.destroy()
             break
         }
     }
 })
 
-alt.on("onEnterLoginData", (loginData: any) => {
-    alt.emitServer("onEnterLoginData", loginData)
-})
-
-alt.onServer('onRegistrationFailed', (errCode: number, errText: number) => {
-    console.log(errCode, errText);
+alt.onServer('auth:registerFailed', (errCode: number, errText: number) => {
+    alt.logError(errCode, errText);
     authBrowser.emit('onRegistrationFailed', errCode, errText);
 })
 
-alt.onServer("onRegistrationSuccess", () => {
-    alt.log("reg is success")
+alt.onServer("auth:registerSuccess", () => {
     authBrowser.close()
     authBrowser.destroyWebView()
     authCamera.destroy()
+})
+
+alt.onServer("auth:loginSuccess", () => {
+    authBrowser.close()
+    authBrowser.destroyWebView()
+    authCamera.destroy()
+})
+
+alt.onServer("auth:loginFailed", (errText: string) => {
+    alt.logError(errText);
 })

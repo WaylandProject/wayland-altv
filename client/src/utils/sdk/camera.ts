@@ -38,6 +38,11 @@ export class Camera {
     constructor(pos: Vector3, fov: number, rot: Vector3 = {x: 0, y: 0, z:0}, setHDAreaAndFocus: boolean = true) {
         const args = native.getActiveScreenResolution(0, 0);
 
+        this._setHDAreaAndFocus = setHDAreaAndFocus;
+        if (this._setHDAreaAndFocus) {
+            native.setFocusPosAndVel(pos.x, pos.y, pos.z, 0.0, 0.0, 0.0)
+            native.setHdArea(pos.x, pos.y, pos.z, 30.0);
+        }
         this._cam = native.createCamWithParams(
             'DEFAULT_SCRIPTED_CAMERA',
             pos.x,
@@ -57,7 +62,6 @@ export class Camera {
         this._playerControlFunction = () => {}
         this._rotation = rot
         this._position = pos
-        this._setHDAreaAndFocus = setHDAreaAndFocus;
     }
 
     fov(value: number) {

@@ -17,6 +17,8 @@
  * along with Wayland Project Server.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -21,6 +21,8 @@
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
+
 namespace Wayland.SDK
 {
     public class AccountData
@@ -33,5 +35,17 @@ namespace Wayland.SDK
         public string HwID { get; set; }
         public byte[] Password { get; set; }
         public byte[] Salt { get; set; }
+
+        public async void Save() {
+            var col = Context.MongoDB.GetCollection<AccountData>("accounts");
+            if (ID == null || ID == "") {
+                await col.InsertOneAsync(this);
+            } else {
+                await col.ReplaceOneAsync(
+                    filter: item => item.ID == ID,
+                    replacement: this
+                );
+            }
+        }
     }
 }

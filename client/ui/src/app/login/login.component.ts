@@ -25,6 +25,11 @@ export class LoginComponent implements OnInit {
   }
 
   public submit(): void {
-    alt.emit('onEnterLoginData', { email: this.loginForm.value.email, password: this.loginForm.value.password });
+    alt.emit('auth:enterLoginData',
+      {
+        email: this.loginForm.value.email,
+        password: this.loginForm.value.password
+      }
+    );
   }
 }

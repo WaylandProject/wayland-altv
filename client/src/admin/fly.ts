@@ -31,11 +31,17 @@ let freecam = {
         let entityHeight = native.getEntityHeight(alt.Player.local.scriptID, alt.Player.local.pos.x, alt.Player.local.pos.y, alt.Player.local.pos.z, true, false);
         let posPlayer = new alt.Vector3(alt.Player.local.pos.x, alt.Player.local.pos.y, alt.Player.local.pos.z + entityHeight);
         let rotPlayer = native.getEntityRotation(alt.Player.local.scriptID, 2);
-        rotPlayer = new alt.Vector3(rotPlayer.x, 0, 0);
+        rotPlayer = new alt.Vector3(0, 0, rotPlayer.z);
 
         freecam.camera = native.createCamWithParams("DEFAULT_SCRIPTED_CAMERA", posPlayer.x, posPlayer.y, posPlayer.z, rotPlayer.x, rotPlayer.y, rotPlayer.z, 60, true, 2);
         native.setCamActive(freecam.camera, true);
         native.renderScriptCams(true, false, 0, false, false, false);
+
+        freecam.webView.emit('Position:SetX', posPlayer.x);
+        freecam.webView.emit('Position:SetY', posPlayer.y);
+        freecam.webView.emit('Position:SetZ', posPlayer.z);
+        
+        freecam.webView.emit('Rotation:SetZ', rotPlayer.z);
 
         alt.toggleGameControls(false);
         native.setPlayerInvincible(alt.Player.local.scriptID, true);
@@ -186,7 +192,6 @@ function executeActions() {
         );
 
         freecam.webView.emit('Rotation:SetX', newCamRot.x);
-        freecam.webView.emit('Rotation:SetY', newCamRot.y);
         freecam.webView.emit('Rotation:SetZ', newCamRot.z);
     }
 

@@ -35,7 +35,6 @@ export class RegisterComponent implements OnInit {
   }
 
   public submit(): void {
-    console.log('submit');
     alt.emit('onEnterRegisterData',
       {
         email: this.registerForm.value.email,
