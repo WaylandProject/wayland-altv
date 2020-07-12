@@ -31,15 +31,16 @@
         width: auto;
         height: auto;
 
-        position: absolute;
+        position: relative;
         top: 2.5rem;
-        left: 2.5rem;
+        right: 2.5rem;
 
         font-family: 'Ubuntu';
         font-weight: bolder;
         font-size: 2.0rem;
         color: rgb(250, 250, 250);
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.50);
+        float: right;
     }
 
     section#position {
@@ -48,10 +49,11 @@
 
         position: absolute;
         top: 7.5rem;
-        left: 2.5rem;
+        right: 2.5rem;
 
         background: rgba(0, 0, 0, 0.20);
         border-radius: 5px;
+        float: right;
     }
 
     section#position>header {
@@ -131,14 +133,15 @@
 
     section#rotation {
         width: 16.25rem;
-        height: 8.15rem;
+        height: 6.9rem;
 
         position: absolute;
         top: 17.5rem;
-        left: 2.5rem;
+        right: 2.5rem;
 
         background: rgba(0, 0, 0, 0.20);
         border-radius: 5px;
+        float: right;
     }
 
     section#rotation>header {
@@ -174,7 +177,7 @@
     }
 
     section#rotation>div#rotZ {
-        top: 6.25rem;
+        top: 5.0rem;
     }
 
     section#rotation>div#rotX>span:nth-of-type(1),
@@ -221,11 +224,12 @@
         height: 8.0rem;
 
         position: absolute;
-        top: 27.5rem;
-        left: 2.5rem;
+        top: 26.25rem;
+        right: 2.5rem;
 
         background: rgba(0, 0, 0, 0.20);
         border-radius: 5px;
+        float: right;
     }
 
     section#speed>header {
@@ -428,7 +432,7 @@
         var posApp = new Vue({
             el: 'section#position',
             data: {
-                posX: 175.21547,
+                posX: 0,
                 posY: 0,
                 posZ: 0
             },
